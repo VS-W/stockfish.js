@@ -1,0 +1,1 @@
+Just a simple canvas-based front-end to [Stockfish.js](https://github.com/nmrugg/stockfish.js), a WASM implementation of the [Stockfish](https://github.com/official-stockfish/Stockfish) chess engine.
