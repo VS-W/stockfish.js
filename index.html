@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<script src="js/chess.min.js"></script>
+	<script src="js/board.js"></script>
+	<title>Chess</title>
+
+	<style>
+		html,
+		body {
+			display: flex;
+			height: 100%;
+			width: 100%;
+			padding: 0;
+			margin: 0;
+			background-color: #222;
+			color: white;
+			overflow: hidden;
+		}
+
+		#info {
+			font-family: monospace;
+			display: flex;
+			flex-direction: column;
+			width: 50%;
+			height: 100%;
+			margin: 1%;
+		}
+
+		#controls {
+			height: 30%;
+		}
+
+		#controls * {
+			margin-bottom: 0.25em;
+		}
+
+		#evaluation {
+			height: 35%;
+			overflow: scroll;
+			white-space: pre-wrap;
+			background: #111;
+			margin: 0;
+			padding: 0;
+			box-shadow: 0em 0em 0.5em rgba(0, 0, 0, 0.8);
+			overflow-x: hidden;
+		}
+
+		#log {
+			height: 30%;
+			overflow: scroll;
+			white-space: pre-wrap;
+			background: #111;
+			margin: 0;
+			padding: 0;
+			margin-bottom: 2%;
+			box-shadow: 0em 0em 0.5em rgba(0, 0, 0, 0.8);
+			overflow-x: hidden;
+		}
+
+		#engineStatus {
+			margin-bottom: 1%;
+		}
+
+		#newGameBtn {
+			width: 33.33%;
+			margin-left: 33.33%;
+		}
+
+		.inputWrap {
+			display: flex;
+			text-align: right;
+		}
+
+		.inputWrap * {
+			margin-left: 5%;
+		}
+
+		.inputWrap :first-child, .inputWrap input[type=number] {
+			width: 30%;
+		}
+		
+		#boardContainer {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 100%;
+			width: 50%;
+			background: #222;
+			overflow: hidden;
+		}
+		
+		#board {
+			background: magenta;
+			box-shadow: 0em 0em 1em rgba(0, 0, 0, 0.8);
+		}
+
+		#animateBoard {
+			position: absolute;
+			pointer-events: none;
+			/* background: rgba(255, 0, 255, 0.1); */
+		}
+	</style>
+</head>
+
+<body>
+	<div id="info">
+		<div id="controls">
+			<div class="inputWrap">
+				<label>Skill level:</label>
+				<input type="number" id="skillLevel" value="3">
+			</div>
+			<div class="inputWrap">
+				<label>Show score?</label>
+				<input type="checkbox" id="showScore" checked>
+			</div>
+			<div class="inputWrap">
+				<label>Color:</label>
+				<div>
+					<label>White<input type="radio" name="color" data-color="white" checked></label>
+					<label>Black<input type="radio" name="color" data-color="black"></label>
+				</div>
+			</div>
+			<div class="inputWrap">
+				<label>Promote:</label>
+				<select id=promote>
+					<option value="q" selected>Queen</option>
+					<option value="r">Rook</option>
+					<option value="b">Bishop</option>
+					<option value="n">Knight</option>
+				</select>
+			</div>
+			<input id="newGameBtn" type="button" value="New Game">
+			<div id="engineStatus">...</div>
+		</div>
+		<pre id="log"></pre>
+		<pre id="evaluation"></pre>
+	</div>
+	<div id="boardContainer">
+		<canvas id="board"></canvas>
+	</div>
+	<canvas id="animateBoard"></canvas>
+
+	<script src="enginegame.js"></script>
+	<script>
+		let game;
+		function init() {
+			game = engineGame();
+
+			document.getElementById("skillLevel").addEventListener("change", function () {
+				game.setSkillLevel(parseInt(this.value, 10));
+			});
+
+			document.getElementById("newGameBtn").addEventListener("click", function () {
+				newGame();
+			});
+
+			newGame();
+		}
+
+		function newGame() {
+			game.setSkillLevel(parseInt(document.getElementById("skillLevel").value, 10));
+
+			let skill = parseInt(document.querySelector('#skillLevel').value);
+			game.reset();
+			game.setSkillLevel(skill);
+			document.querySelectorAll("input[name=color]").forEach(input => {
+				if (input.checked) {
+					let color = input.dataset.color === 'white' ? 'white' : 'black';
+					game.setPlayerColor(color);
+				}
+			});
+			game.setDisplayScore(document.querySelector('#showScore').checked);
+			game.start();
+		}
+
+		document.addEventListener("DOMContentLoaded", init);
+	</script>
+</body>
+
+</html>
